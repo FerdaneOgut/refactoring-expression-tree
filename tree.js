@@ -1,34 +1,94 @@
 const assert = require("assert");
 
+class Operation {
+  constructor(left, right) {
+    this.right = right;
+    this.left = left;
+  }
+  calculate() {
+    return 0;
+  }
+  toString() {
+    return "";
+  }
+}
+
+class Sum extends Operation {
+  constructor(left, right) {
+    super(left, right);
+  }
+  calculate() {
+    return this.left.result() + this.right.result();
+  }
+  toString() {
+    return `(${this.left.toString()} + ${this.right.toString()})`;
+  }
+}
+
+class Subtruct extends Operation {
+  constructor(left, right) {
+    super(left, right);
+  }
+  calculate() {
+    return this.left.result() - this.right.result();
+  }
+  toString() {
+    return `(${this.left.toString()} - ${this.right.toString()})`;
+  }
+}
+
+class Multiply extends Operation {
+  constructor(left, right) {
+    super(left, right);
+  }
+  calculate() {
+    return this.left.result() * this.right.result();
+  }
+  toString() {
+    return `(${this.left.toString()} x ${this.right.toString()})`;
+  }
+}
+class Divide extends Operation {
+  constructor(left, right) {
+    super(left, right);
+  }
+  calculate() {
+    return this.left.result() / this.right.result();
+  }
+  toString() {
+    return `(${this.left.toString()} ÷ ${this.right.toString()})`;
+  }
+}
+
+const operatorFactory = (operator, left, right) => {
+  switch (operator) {
+    case "+":
+      return new Sum(left, right);
+    case "-":
+      return new Subtruct(left, right);
+    case "x":
+      return new Multiply(left, right);
+    case "÷":
+      return new Divide(left, right);
+    default:
+      return undefined;
+  }
+};
+
 const Node = (operator, value, left, right) => {
+  const operation = operatorFactory(operator, left, right);
   const result = function () {
-    switch (this.operator) {
-      case "+":
-        return left.result() + right.result();
-      case "-":
-        return left.result() - right.result();
-      case "x":
-        return left.result() * right.result();
-      case "÷":
-        return left.result() / right.result();
-      default:
-        return value;
+    if (operation) {
+      return operation.calculate();
     }
+    return value;
   };
 
   const toString = function () {
-    switch (this.operator) {
-      case "+":
-        return `(${left.toString()} + ${right.toString()})`;
-      case "-":
-        return `(${left.toString()} - ${right.toString()})`;
-      case "x":
-        return `(${left.toString()} x ${right.toString()})`;
-      case "÷":
-        return `(${left.toString()} ÷ ${right.toString()})`;
-      default:
-        return value.toString();
+    if (operation) {
+      return operation.toString();
     }
+    return value.toString();
   };
 
   return {
@@ -37,7 +97,7 @@ const Node = (operator, value, left, right) => {
     left,
     right,
     result,
-    toString
+    toString,
   };
 };
 
